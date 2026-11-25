@@ -1,3 +1,4 @@
+
 import { Navigate, Route, Routes } from 'react-router-dom'
 import { Spinner } from './components/ui/Spinner'
 import { useAuth } from './hooks/useAuth'
@@ -6,6 +7,7 @@ import { LoginPage } from './pages/LoginPage'
 
 function Protected() {
   const { user, loading } = useAuth()
+
   if (loading) {
     return (
       <div className="flex min-h-screen items-center justify-center">
@@ -13,7 +15,9 @@ function Protected() {
       </div>
     )
   }
-  if (!user) return <Navigate to="/login" replace />
+
+  if (!user) return <LoginPage />
+
   return <DashboardPage />
 }
 

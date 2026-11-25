@@ -68,3 +68,33 @@ export async function provisionEtherealSenders(userId: string, count: number) {
   }
   return created
 }
+let otpTransporter: Transporter | undefined
+
+function getOtpTransporter(): Transporter {
+  if (!config.smtpUser || !config.smtpPass) {
+    throw new Error('OTP email SMTP is not configured')
+  }
+
+  if (!otpTransporter) {
+    otpTransporter = nodemailer.createTransport({
+      host: config.smtpHost,
+      port: config.smtpPort,
+      secure: config.smtpPort === 465,
+      auth: {
+        user: config.smtpUser,
+        pass: config.smtpPass,
+      },
+    })
+  }
+
+  return otpTransporter
+}
+
+export async function sendOtpEmail(to: string, code: string): Promise<void> {
+  await getOtpTransporter().sendMail({
+    from: `"${config.smtpFromName}" <${config.smtpUser}>`,
+    to,
+    subject: 'Your Postline verification code',
+    text: `Your Postline verification code is ${code}. It expires in 10 minutes. If you did not request this, ignore this email.`,
+  })
+}

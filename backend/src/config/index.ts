@@ -1,3 +1,4 @@
+
 import { z } from 'zod'
 
 const envSchema = z.object({
@@ -24,6 +25,10 @@ const envSchema = z.object({
   JOB_BACKOFF_MS: z.coerce.number().int().positive().default(5000),
   MAX_RECIPIENTS_PER_CAMPAIGN: z.coerce.number().int().positive().default(5000),
   SMTP_FROM_NAME: z.string().min(1).default('Postline'),
+  SMTP_HOST: z.string().default('smtp.gmail.com'),
+  SMTP_PORT: z.coerce.number().default(465),
+  SMTP_USER: z.string().email().or(z.literal('')).default(''),
+  SMTP_PASS: z.string().default(''),
 })
 
 const parsed = envSchema.safeParse(process.env)
@@ -59,6 +64,10 @@ export const config = {
   jobBackoffMs: parsed.data.JOB_BACKOFF_MS,
   maxRecipientsPerCampaign: parsed.data.MAX_RECIPIENTS_PER_CAMPAIGN,
   smtpFromName: parsed.data.SMTP_FROM_NAME,
+  smtpHost: parsed.data.SMTP_HOST,
+  smtpPort: parsed.data.SMTP_PORT,
+  smtpUser: parsed.data.SMTP_USER,
+  smtpPass: parsed.data.SMTP_PASS,
 }
 
 export const googleOAuthConfigured = Boolean(config.googleClientId && config.googleClientSecret)

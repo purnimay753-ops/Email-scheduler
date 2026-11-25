@@ -7,3 +7,4 @@ coverage
 .prisma
 frontend/dist
 backend/dist
+backend/.env
